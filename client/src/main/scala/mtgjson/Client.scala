@@ -43,6 +43,9 @@ class MtgjsonClient(implicit val system: ActorSystem) {
         case Right(value) => value
       }
 
+  def getPrintings(): Source[Printing, _] =
+    fetch[Printing]("https://mtgjson.com/api/v5/AllIdentifiers.json")
+
   def getCards(): Source[Card,_] =
     fetch[Seq[Card]]("https://mtgjson.com/api/v5/AtomicCards.json").map(_.head)
 

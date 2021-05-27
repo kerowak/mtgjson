@@ -20,7 +20,7 @@ case object FrameEffect extends StringEnum[FrameEffect] with StringCirceEnum[Fra
   case object MoonEldraziDFC         extends FrameEffect("mooneldrazidfc")
   case object NyxBorn                extends FrameEffect("nyxborn")
   case object NyxTouched             extends FrameEffect("nyxtouched")
-  case object OrgiginPWDFC           extends FrameEffect("originpwdfc")
+  case object OriginPwdDFC           extends FrameEffect("originpwdfc")
   case object Showcase               extends FrameEffect("showcase")
   case object Snow                   extends FrameEffect("snow")
   case object SunMoonDFC             extends FrameEffect("sunmoondfc")

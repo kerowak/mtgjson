@@ -13,12 +13,14 @@ object Tool extends App {
 
   import system.dispatcher
 
-  val sets = Await.result(client.fetchSets
-    .map(_.code)
+  val printings = Await.result(client.getPrintings()
+    .filter(_.frameEffects.size > 1)
+    .map {printing =>
+      println(printing.frameEffects)
+      printing
+    }
     .runWith(Sink.seq), Duration.Inf)
 
-  client.fetchCards
-    .runWith(Sink.ignore)
-    .flatMap(_ => system.terminate)
-    .onComplete(_ => println("done"))
+  println(printings.size)
+  system.terminate()
 }

@@ -3,7 +3,7 @@ val CirceVersion = "0.13.0"
 
 val client = project
   .settings(
-    version := "0.2.1",
+    version := "0.3.0",
     name := "mtgjson",
     organization := "com.kerowak",
     scalaVersion := "2.13.4"

@@ -1,7 +1,7 @@
 package mtgjson
 
 import akka.http.scaladsl.client.RequestBuilding.Get
-import akka.actor.ActorSystem
+import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl._
 import akka.actor.typed.scaladsl.adapter._
@@ -16,7 +16,7 @@ import io.circe.Decoder
 import io.circe.generic.extras.auto._
 import io.circe.generic.extras.Configuration
 
-class MtgjsonClient(implicit val system: ActorSystem) {
+class MtgjsonClient(implicit val system: ActorSystem[_]) {
 
   implicit val circeConfig: Configuration = Configuration.default.withDefaults
   val http = Http()

@@ -3,8 +3,6 @@ package mtgjson
 import akka.http.scaladsl.client.RequestBuilding.Get
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl._
-import akka.actor.typed.scaladsl.adapter._
 import akka.stream.scaladsl.Source
 import akka.stream.alpakka.json.scaladsl.JsonReader
 import akka.http.scaladsl.model.HttpResponse
@@ -31,12 +29,12 @@ class MtgjsonClient(implicit val system: ActorSystem[_]) {
   private def toJson[T](msg: ByteString)(implicit decoder: Decoder[T]) =
     decode[T](msg.utf8String)
 
-  private def fetch[T](uri: String)(implicit decoder: Decoder[T]) =
+  private def stream[T](uri: String)(implicit decoder: Decoder[T]) =
     Source
       .single(Get(uri))
       .mapAsync(1)(http.singleRequest(_))
       .flatMapConcat(extractEntityData)
-      .via(JsonReader.select("$.data[*]")) // Only stream the nested portion of the document
+      .via(JsonReader.select("$.data[*]"))
       .map(toJson[T])
       .map {
         case Left(err) => throw err
@@ -44,12 +42,14 @@ class MtgjsonClient(implicit val system: ActorSystem[_]) {
       }
 
   def getPrintings(): Source[Printing, _] =
-    fetch[Printing]("https://mtgjson.com/api/v5/AllIdentifiers.json")
+    stream[Printing]("https://mtgjson.com/api/v5/AllIdentifiers.json")
 
-  def getCards(): Source[Card,_] =
-    fetch[Seq[Card]]("https://mtgjson.com/api/v5/AtomicCards.json").map(_.head)
+  def getCards(): Source[Card,_] = {
+    stream[Seq[Card]]("https://mtgjson.com/api/v5/AtomicCards.json")
+      .map(_.head) // We're just gonna ignore multi-faced cards for now...
+  }
 
   def getSets(): Source[mtgjson.Set, _] =
-    fetch[mtgjson.Set]("https://mtgjson.com/api/v5/SetList.json")
+    stream[mtgjson.Set]("https://mtgjson.com/api/v5/SetList.json")
 
 }
